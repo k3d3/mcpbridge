@@ -9,6 +9,7 @@ pub async fn get_first_message<S>(
 where
     S: AsyncRead + AsyncWrite + Unpin,
 {
+    println!("firstmessage");
     if let Some(Ok(msg)) = stream.next().await {
         if let Ok(text) = msg.into_text() {
             match serde_json::from_str::<ConnectionMessage>(&text) {

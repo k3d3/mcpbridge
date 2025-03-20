@@ -15,15 +15,19 @@ pub async fn run_message_loop(
     loop {
         tokio::select! {
             Some(line) = rx.recv() => {
+                // From MCP server
+                println!("OUT: {}", line);
                 if let Err(e) = write.send(Message::Text(line)).await {
                     eprintln!("Error sending output: {}", e);
                     break;
                 }
             }
             Some(result) = read.next() => {
+                // From websocket
                 match result {
                     Ok(msg) => {
                         if let Ok(text) = msg.into_text() {
+                            println!("IN: {}", text);
                             stdin.write_all(text.as_bytes()).await?;
                             stdin.write_all(b"\n").await?;
                         }
